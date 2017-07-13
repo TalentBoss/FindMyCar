@@ -1,0 +1,1285 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Theme Made By www.w3schools.com - No Copyright -->
+<title>Find My Car</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script
+	src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="https://fonts.googleapis.com/css?family=Montserrat"
+	rel="stylesheet">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script
+	src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="http://d3js.org/topojson.v1.min.js"></script>
+<script src="./js/datamaps.world.min.js?v=1"></script>
+
+ <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+ 
+  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<style type="text/css">
+.row {
+	margin: 0px;
+}
+
+.bar {
+	background-size: contain;
+}
+
+.dot {
+	stroke: #000;
+}
+
+.bar:hover {
+	fill: steelblue;
+}
+
+.axis {
+	font: 12px;
+}
+
+.axis path, .axis line {
+	fill: none;
+	stroke: #ddd;
+	shape-rendering: crispEdges;
+}
+
+.link {
+	stroke: #aaa;
+}
+
+.node text {
+	stroke: #333;
+	cursos: pointer;
+}
+
+.d3-tip {
+	line-height: 1;
+	font-weight: bold;
+	padding: 12px;
+	background: rgba(0, 0, 0, 0.8);
+	color: #fff;
+	border-radius: 2px;
+}
+
+/* Creates a small triangle extender for the tooltip */
+.d3-tip:after {
+	box-sizing: border-box;
+	display: inline;
+	font-size: 10px;
+	width: 100%;
+	line-height: 1;
+	color: rgba(0, 0, 0, 0.8);
+	content: "\25BC";
+	position: absolute;
+	text-align: center;
+}
+
+/* Style northward tooltips differently */
+.d3-tip.n:after {
+	margin: -1px 0 0 0;
+	top: 100%;
+	left: 0;
+}
+
+path {
+	stroke: steelblue;
+	stroke-width: 2;
+	fill: none;
+}
+
+.axis path, .axis line {
+	fill: none;
+	stroke: grey;
+	stroke-width: 1;
+	shape-rendering: crispEdges;
+}
+
+.node text {
+	stroke: #333;
+	cursos: pointer;
+}
+
+text {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.toolTip {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	position: absolute;
+	display: none;
+	width: auto;
+	height: auto;
+	background: none repeat scroll 0 0 white;
+	border: 0 none;
+	border-radius: 8px 8px 8px 8px;
+	box-shadow: -3px 3px 15px #888888;
+	color: black;
+	font: 12px sans-serif;
+	padding: 5px;
+	text-align: center;
+}
+
+.legend {
+	font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 60%;
+}
+
+rect {
+	stroke-width: 2;
+}
+
+text {
+	font: 10px sans-serif;
+}
+
+.axis text {
+	font: 10px sans-serif;
+}
+
+.axis path {
+	fill: none;
+	stroke: #000;
+}
+
+.axis line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.axis .tick line {
+	stroke-width: 1;
+	stroke: rgba(0, 0, 0, 0.2);
+}
+
+.axisHorizontal path {
+	fill: none;
+}
+
+.axisHorizontal line {
+	fill: none;
+	stroke: #000;
+	shape-rendering: crispEdges;
+}
+
+.axisHorizontal .tick line {
+	stroke-width: 1;
+	stroke: rgba(0, 0, 0, 0.2);
+}
+
+.bar {
+	fill: steelblue;
+	fill-opacity: .9;
+}
+
+.x.axis path {
+	display: none;
+}
+</style>
+<script type="text/javascript">
+	var container;
+	var priceSearch;
+	var sort_by = function(field, reverse, primer){
+
+	   var key = primer ? 
+		   function(x) {return primer(x[field])} : 
+		   function(x) {return x[field]};
+
+	   reverse = !reverse ? 1 : -1;
+
+	   return function (a, b) {
+		   return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+		 } 
+	}
+	$(document).ready(function() {
+
+						$.getJSON("http://www.cs.odu.edu/~kkallepalli/FindMyCar/CarPricesSearchable.json",function(data) {
+											console.log(data);
+											priceSearch = data;
+										});
+
+						loadCharts();
+						// loadNetworkChart();
+						loadBubbleChart();
+						//loadBrandSalesChart("Ford");
+						$(".sortAttr").change(function () {
+						   console.log($(".sortAttr").val());
+						   specCompareChart();
+						});
+						$(".sortOrder").change(function () {
+						   console.log($(".sortOrder").val());
+						   specCompareChart();
+						});
+
+
+						$( function() {
+						$( "#slider-range" ).slider({
+						  range: true,
+						  min: 0,
+						  max: 500,
+						  values: [ 75, 300 ],
+						  slide: function( event, ui ) {
+							$( "#minAmount" ).text( "$" + ui.values[0]);
+							$( "#maxAmount" ).text(" $" + ui.values[1]);
+						  }
+						});
+						
+						$("#minAmount" ).text( "$" + $( "#slider-range" ).slider( "values", 0 ));
+						$("#maxAmount" ).text( " $" + $( "#slider-range" ).slider( "values", 1 ));
+					  } );
+					});
+
+	var dataset = [];
+	var linkCars = [];
+	var clickedLinkCars = [];
+
+	function loadCharts() {
+		var basic_choropleth = new Datamap({
+			element : document.getElementById("map"),
+			projection : 'mercator',
+			fills : {
+				defaultFill : "#606060",
+				authorHasTraveledTo : "#4eb1d6"
+			},
+			data : {
+				USA : {
+					fillKey : "authorHasTraveledTo",
+					brands : 45
+				},
+				JPN : {
+					fillKey : "authorHasTraveledTo",
+					brands : 20
+				},
+				ITA : {
+					fillKey : "authorHasTraveledTo",
+					brands : 5
+				},
+				CRI : {
+					fillKey : "authorHasTraveledTo",
+					brands : 10
+				},
+				KOR : {
+					fillKey : "authorHasTraveledTo",
+					brands : 24
+				},
+				DEU : {
+					fillKey : "authorHasTraveledTo",
+					brands : 12
+				},
+			},
+			done : function(datamap) {
+				datamap.svg.selectAll('.datamaps-subunit').on('click',
+						function(geography) {
+							console.log(geography);
+							alert(geography.id);
+						});
+			}
+		});
+	}
+
+	function specCompareChart() {
+		$("#ccChart").empty();
+		$("#rpmChart").empty();
+		$("#mileageChart").empty();
+		$("#priceChart").empty();
+		$("#heightChart").empty();
+		$("#widthChart").empty();
+
+		console.log("loading spec chart -");
+
+		if ($("#price").prop("checked")) {
+			$("#priceChart").show();
+		} else {
+			$("#priceChart").hide();
+		}
+
+		if ($("#rpm").prop("checked")) {
+			$("#rpmChart").show();
+		} else {
+			$("#rpmChart").hide();
+		}
+
+		if ($("#mileage").prop("checked")) {
+			$("#mileageChart").show();
+		} else {
+			$("#mileageChart").hide();
+		}
+
+		if ($("#carHeight").prop("checked")) {
+			$("#heightChart").show();
+		} else {
+			$("#heightChart").hide();
+		}
+		if ($("#carWidth").prop("checked")) {
+			$("#widthChart").show();
+		} else {
+			$("#widthChart").hide();
+		}
+		if ($("#price").prop("checked")) {
+			$("#priceChart").show();
+		} else {
+			$("#priceChart").hide();
+		}
+
+		//d3.json("./2010alldata.json", function(data) {
+		var data = clickedLinkCars;
+		var count = 0;
+		var modelNames = [];
+		console.log(data);
+		dataset = [];
+		modelNames = [];
+		$.each(data, function(i, d) {
+			var carname = (d.group + " " + d.name).trim();
+			//console.log("===="+d.group+" "+d.name+"====");
+			//console.log(priceSearch["Honda CR-V"])
+			if (priceSearch[carname] != null) {
+				console.log(carname + "   === " + priceSearch[carname].mileage
+						+ " :: " + priceSearch[carname].price);
+			} else {
+				console.log(carname + "   === " + Math.random(10, 30));
+			}
+
+			modelNames.push(d.group + " " + d.name);
+			var rpm, cc, mileage;
+			/* if(d.cc==null){cc=0}else{cc=d.cc}
+			if(d.torquerpm==null){rpm=0}else{rpm=d.torquerpm}
+			if(d.mileage==null){mileage=0}else{mileage=d.mileage}
+			dataset.push({"id":count,"model":d.group+" "+d.name,"label":d.group+" "+d.name+" "+d.name,"engine_cc":cc,"torque":parseFloat(rpm),"mileage":parseFloat(mileage),"dtype":d.dtype});
+			 */
+			count += 1;
+		});
+
+		console.log(data);
+		if($(".sortOrder").val()=="lth")
+		{
+		switch($(".sortAttr").val())
+		{
+			case "enginecc":
+		        data.sort(sort_by('cc', false, parseInt));
+		        break;
+		    case "power":
+		        data.sort(sort_by('enginepower', false, parseInt));
+		        break;
+		    case "mileage":
+		        data.sort(sort_by('mileage', false, parseInt));
+		        break;
+		    // case "price":
+		    //     data.sort(sort_by('cc', true, parseInt));
+		    //     break;
+		    default:
+		        data.sort(sort_by('cc', false, parseInt));
+		        break;
+		    case "height":
+		        data.sort(sort_by('height', false, parseInt));
+		        break;
+		    case  "width":
+		        data.sort(sort_by('width', false, parseInt));
+		        break;
+		    case  "name":
+		        data.sort(function(a,b) {
+					    if ( a.group+" "+a.name <  b.group+" "+b.name )
+					        return -1;
+					    if (  a.group+" "+a.name > b.group+" "+b.name )
+					        return 1;
+					    return 0;
+					} );
+		        break;
+		}
+	}
+	else if($(".sortOrder").val()=="htl")
+	{
+		switch($(".sortAttr").val())
+		{
+			case "enginecc":
+		        data.sort(sort_by('cc', true, parseInt));
+		        break;
+		    case "power":
+		        data.sort(sort_by('enginepower', true, parseInt));
+		        break;
+		    case "mileage":
+		        data.sort(sort_by('mileage', true, parseInt));
+		        break;
+		    // case "price":
+		    //     data.sort(sort_by('cc', true, parseInt));
+		    //     break;
+		    default:
+		        data.sort(sort_by('cc', true, parseInt));
+		        break;
+		    case "height":
+		        data.sort(sort_by('height', true, parseInt));
+		        break;
+		    case  "width":
+		        data.sort(sort_by('width', true, parseInt));
+		        break;
+		    case  "name":
+		       data.sort(function(a,b) {
+					    if ( a.group+" "+a.name <  b.group+" "+b.name )
+					        return 1;
+					    if (  a.group+" "+a.name > b.group+" "+b.name )
+					        return -1;
+					    return 0;
+					} );
+		        break;
+		}
+	}
+		var margin = {
+			top : 20,
+			right : 30,
+			bottom : 30,
+			left : 200
+		}, width = window.innerWidth / 4 - margin.left - margin.right, height = 500
+				- margin.top - margin.bottom;
+
+		var y = d3.scale.ordinal().rangeRoundBands([ 0, height - 50 ], .3);
+
+		var x = d3.scale.linear().range([ 0, width ]);
+
+		y.domain(data.map(function(d) {
+			return d.group + " " + d.name;
+		}));
+		x.domain([ 0, d3.max(data, function(d) {
+			return parseInt(d.cc);
+		}) ]);
+
+		var xAxis = d3.svg.axis().scale(x).ticks(3).orient("bottom");
+
+		var yAxis = d3.svg.axis().scale(y).orient("left");
+
+		var tip = d3
+				.tip()
+				.attr('class', 'd3-tip')
+				.offset([ -10, 0 ])
+				.html(
+						function(d) {
+							return "<strong style='background:white;'>Car: <span style='color:red'>"
+									+ d.group
+									+ " "
+									+ d.name
+									+ "</span> , CC : " + d.cc + " </strong>";
+						})
+
+		var chart = d3.select("#ccChart").append("svg").attr("width",
+				width + margin.left + margin.right).attr("height",
+				height + margin.top + margin.bottom).append("g").attr(
+				"transform", "translate(" + margin.left + ",0)");
+
+		chart.call(tip);
+
+		chart.append("g").attr("class", "x axis").attr("transform",
+				"translate(0," + (height - margin.bottom) + ")").call(xAxis)
+				.selectAll("text");
+
+		// Add the text label for the x axis
+		chart.append("text").attr(
+				"transform",
+				"translate(" + (width / 2) + " ," + (height + margin.bottom)
+						+ ")").style("text-anchor", "middle").text("Engine CC");
+
+		chart.append("g").attr("class", "y axis").attr("transform",
+				"translate(0,0)").call(yAxis).append("text").style(
+				"text-anchor", "start");
+
+		chart.append("text").attr("transform", "rotate(-90)").attr("y",
+				0 - margin.left).attr("x", 0 - (height / 2)).attr("dy", "1em")
+				.style("text-anchor", "middle").text("Model Name");
+
+		chart.selectAll("bar").data(data).enter().append("rect").on('click',
+				function(d) {
+					loadBrandSalesChart(d.group);
+					loadScatterPlotChart(d.group, d.name);
+				}).on('mouseover', tip.show).on('mouseout', tip.hide).attr("x",
+				0).transition().duration(1000).delay(function(d, i) {
+			return i * 100;
+		}).attr("height", y.rangeBand()).attr("y", function(d) {
+			return y(d.group + " " + d.name);
+		}).attr("width", function(d) {
+			return x(parseInt(d.cc));
+		}).attr("class", "bar");
+		//.attr("fill","url(#myroad)");
+
+		margin.left = 10;
+		margin.right = 5;
+
+		//power bar chart
+		var x1 = d3.scale.linear().range([ 0, width ]);
+
+		x1.domain([ 0, d3.max(data, function(d) {
+			return d.enginepower;
+		}) ]);
+
+		var xAxis1 = d3.svg.axis().scale(x1).ticks(3).orient("bottom");
+
+		var chart1 = d3.select("#rpmChart").append("svg").attr("width",
+				width + margin.left + margin.right).attr("height",
+				height + margin.top + margin.bottom).append("g").attr(
+				"transform", "translate(" + margin.left + ",0)");
+
+		chart1.append("g").attr("class", "x axis").attr("transform",
+				"translate(0," + (height - margin.bottom) + ")").call(xAxis1)
+				.selectAll("text");
+
+		// Add the text label for the x axis
+		chart1.append("text").attr(
+				"transform",
+				"translate(" + (width / 2) + " ," + (height + margin.bottom)
+						+ ")").style("text-anchor", "middle").text(
+				"Engine Power");
+
+		chart1.selectAll("bar").data(data).enter().append("rect").on(
+				'mouseover', tip.show).on('mouseout', tip.hide).attr("x", 0)
+				.attr("height", y.rangeBand()).attr("y", function(d) {
+					return y(d.group + " " + d.name);
+				}).attr("width", function(d) {
+					return x1(d.enginepower);
+				}).attr("class", "bar").attr("fill", "maroon");
+
+		margin.left = 10;
+		//mileage bar chart
+		var x2 = d3.scale.linear().range([ 0, width ]);
+
+		x2.domain([ 0, d3.max(data, function(d) {
+			return d.height;
+		}) ]);
+
+		var xAxis2 = d3.svg.axis().scale(x2).ticks(3).orient("bottom");
+
+		var chart2 = d3.select("#heightChart").append("svg").attr("width",
+				width + margin.left + margin.right).attr("height",
+				height + margin.top + margin.bottom).append("g").attr(
+				"transform", "translate(" + margin.left + ",0)");
+
+		chart2.append("g").attr("class", "x axis").attr("transform",
+				"translate(0," + (height - margin.bottom) + ")").call(xAxis2)
+				.selectAll("text");
+
+		// Add the text label for the x axis
+		chart2.append("text").attr(
+				"transform",
+				"translate(" + (width / 2) + " ," + (height + margin.bottom)
+						+ ")").style("text-anchor", "middle").text("Height");
+
+		chart2.selectAll("bar").data(data).enter().append("rect").on(
+				'mouseover', tip.show).on('mouseout', tip.hide).attr("x", 0)
+				.attr("height", y.rangeBand()).attr("y", function(d) {
+					return y(d.group + " " + d.name);
+				}).attr("width", function(d) {
+					return x2(d.height);
+				}).attr("class", "bar").attr("fill", "#188e5b");
+
+				margin.left = 10;
+		//mileage bar chart
+		var x3 = d3.scale.linear().range([ 0, width ]);
+
+		x3.domain([ 0, d3.max(data, function(d) {
+			return d.height;
+		}) ]);
+
+		var xAxis3 = d3.svg.axis().scale(x3).ticks(3).orient("bottom");
+
+		var chart3 = d3.select("#widthChart").append("svg").attr("width",
+				width + margin.left + margin.right).attr("height",
+				height + margin.top + margin.bottom).append("g").attr(
+				"transform", "translate(" + margin.left + ",0)");
+
+		chart3.append("g").attr("class", "x axis").attr("transform",
+				"translate(0," + (height - margin.bottom) + ")").call(xAxis3)
+				.selectAll("text");
+
+		// Add the text label for the x axis
+		chart3.append("text").attr(
+				"transform",
+				"translate(" + (width / 2) + " ," + (height + margin.bottom)
+						+ ")").style("text-anchor", "middle").text("Width");
+
+		chart3.selectAll("bar").data(data).enter().append("rect").on(
+				'mouseover', tip.show).on('mouseout', tip.hide).attr("x", 0)
+				.attr("height", y.rangeBand()).attr("y", function(d) {
+					return y(d.group + " " + d.name);
+				}).attr("width", function(d) {
+					return x2(d.width);
+				}).attr("class", "bar").attr("fill", "yellow");
+		//});	
+	}
+
+
+	function loadNetworkChart(model_body) {
+		$("#networkChart").empty();
+		var margin = {
+			top : -5,
+			right : -5,
+			bottom : -5,
+			left : -5
+		};
+		var width = 1000, height = 1000;
+
+		var zoom = d3.behavior.zoom().scaleExtent([ 1, 10 ]).on("zoom", zoomed);
+
+		var drag = d3.behavior.drag().origin(function(d) {
+			return d;
+		}).on("dragstart", dragstarted).on("drag", dragged).on("dragend",
+				dragended);
+
+		var tip = d3.tip().attr('class', 'd3-tip').offset([ -10, 0 ]).html(
+				function(d) {
+					var tiptext = "<div>";
+					$.each(d, function(i, car) {
+
+						//console.log(car);
+						tiptext += "<strong></strong> <span style='color:red'>"
+								+ car.group + " - " + car.name + " : "
+								+ car.country + " : " + car.dtype
+								+ "</span><br>";
+					});
+					tiptext += "</div>";
+					return tiptext;
+				});
+
+		var svg = d3.select("#networkChart").append("svg").attr("width", width)
+				.attr("height", height).append("g").attr("transform",
+						"translate(" + margin.left + "," + margin.right + ")")
+				.call(zoom);
+
+		svg.call(tip);
+		container = svg.append("g");
+
+		svg.style("cursor", "move");
+
+		var force = d3.layout.force().gravity(.05).distance(500).charge(-80)
+				.size([ width, height ]);
+
+		d3.json("./" + $("#sel1").val() + "data" + model_body + ".json",
+				function(error, json) {
+					// d3.json("http://www.cs.odu.edu/~rgudipati/cs725/FindMyCar/2010Sedan.json", function(error, json) {
+					//var json=;
+
+					console.log(model_body);
+
+					force.nodes(json.nodes).links(json.links).start();
+
+					var link = container.selectAll(".link").data(json.links)
+							.enter().append("line").attr("class", "link")
+							.style("stroke-width", function(d) {
+								return 1;
+							});
+
+					var node = container.selectAll(".node").data(json.nodes)
+							.enter().append("g").attr("class", "node").call(
+									force.drag);
+
+					node.append("image").attr("xlink:href",
+							"./" + model_body + ".png").attr("x", -25).attr(
+							"y", -25).attr("width", 50).attr("height", 50).on(
+							"mouseover",
+							function(d) {
+
+								d3.select(this).attr("width", 70).attr(
+										"height", 70).attr("x", -35).attr("y",
+										-35);
+							}).on(
+							"mouseout",
+							function(d) {
+								tip.hide();
+								d3.select(this).attr("width", 50).attr(
+										"height", 50).attr("x", -25).attr("y",
+										-25);
+							}).on("click", function(d) {
+						clickedLinkCars = [];
+						link.style('stroke-width', function(l) {
+							if (d === l.source) {
+								clickedLinkCars.push(l.target);
+								return 5;
+							} else if (d === l.target) {
+								clickedLinkCars.push(l.source);
+								return 5;
+							} else {
+								return 1;
+							}
+						});
+						specCompareChart();
+					});
+
+					node.on("mouseover", function(d) {
+						linkCars = [];
+						link.style('stroke-width', function(l) {
+							if (d === l.source) {
+								linkCars.push(l.target);
+								return 5;
+							} else if (d === l.target) {
+								linkCars.push(l.source);
+								return 5;
+							} else {
+								return 1;
+							}
+						});
+						tip.show(linkCars);
+						link.style('stroke', function(l) {
+							if (d === l.source || d === l.target)
+								return "#ff0000";
+							else
+								return "#aaa";
+						});
+					});
+
+					node.on("mouseout", function(d) {
+						link.style('stroke-width', function(l) {
+							return 1;
+						});
+						link.style('stroke', function(l) {
+							if (d === l.source || d === l.target)
+								return "#aaa";
+						});
+					});
+
+					node.append("text").attr("dx", -10).attr("dy", -20).text(
+							function(d) {
+								return d.name
+							});
+
+					node.append("title").text(function(d) {
+						return d.name;
+					});
+
+					force.on("tick", function() {
+						link.attr("x1", function(d) {
+							return d.source.x;
+						}).attr("y1", function(d) {
+							return d.source.y;
+						}).attr("x2", function(d) {
+							return d.target.x;
+						}).attr("y2", function(d) {
+							return d.target.y;
+						});
+
+						node.attr("transform", function(d) {
+							return "translate(" + d.x + "," + d.y + ")";
+						});
+					});
+
+				});
+	}
+
+	function zoomed() {
+		container.attr("transform", "translate(" + d3.event.translate
+				+ ")scale(" + d3.event.scale + ")");
+	}
+
+	function dragstarted(d) {
+		d3.event.sourceEvent.stopPropagation();
+		d3.select(this).classed("dragging", true);
+	}
+
+	function dragged(d) {
+		d3.select(this).attr("cx", d.x = d3.event.x).attr("cy",
+				d.y = d3.event.y);
+	}
+
+	function dragended(d) {
+		d3.select(this).classed("dragging", false);
+	}
+
+	function loadBubbleChart() {
+		$("#bubbleChart").empty();
+		var diameter = 500, format = d3.format(",d"), color = d3.scale
+				.category20c();
+
+		var bubble = d3.layout.pack().sort(null).size([ diameter, diameter ])
+				.padding(1.5);
+
+		var svg = d3.select("#bubbleChart").append("svg").attr("width",
+				diameter).attr("height", diameter).attr("class", "bubble");
+
+		var tooltip = d3.select("body").append("div").style("position",
+				"absolute").style("z-index", "10")
+				.style("visibility", "hidden").style("color", "white").style(
+						"padding", "8px").style("background-color",
+						"rgba(0, 0, 0, 0.75)").style("border-radius", "6px")
+				.style("font", "12px sans-serif").text("tooltip");
+
+		d3.json($("#sel1").val() + "Bubbledata.json", function(error, data) {
+			//console.log(data);
+			var node = svg.selectAll(".node").data(bubble.nodes(classes({
+				"name" : "flare",
+				"children" : data
+			})).filter(function(d) {
+				return !d.children;
+			})).enter().append("g").attr("class", "node").attr("transform",
+					function(d) {
+						return "translate(" + d.x + "," + d.y + ")";
+					});
+
+			// console.log(bubble.nodes(data));
+
+			node.append("circle").attr("r", function(d) {
+				return d.r;
+			}).style("fill", function(d) {
+				return color(d.packageName);
+			}).on("mouseover", function(d) {
+				tooltip.text(d.packageName + ": " + format(d.value));
+
+				tooltip.style("visibility", "visible");
+			}).on("click", function(d) {
+				loadNetworkChart(d.packageName);
+			}).on(
+					"mousemove",
+					function() {
+
+						return tooltip.style("top",
+								(d3.event.pageY - 10) + "px").style("left",
+								(d3.event.pageX + 10) + "px");
+					}).on("mouseout", function() {
+				return tooltip.style("visibility", "hidden");
+			});
+
+			node.append("text").attr("dy", ".3em").style("text-anchor",
+					"middle").style("pointer-events", "none").text(function(d) {
+				return d.packageName;
+			});
+		});
+
+		function classes(root) {
+			var classes = [];
+
+			function recurse(name, node) {
+				if (node.children)
+					node.children.forEach(function(child) {
+						recurse(node.model_body, child);
+					});
+				else
+					classes.push({
+						packageName : node.model_body,
+						className : node.model_body,
+						value : node.count
+					});
+			}
+
+			recurse(null, root);
+			return {
+				children : classes
+			};
+		}
+
+	}
+
+	function loadBrandSalesChart(automaker) {
+		$("#brandSalesChart").empty();
+		var data = [];
+		d3.json("carsales.json",
+				function(error, dataset) {
+					// console.log(dataset);
+					dataset.forEach(function(d) {
+
+						if (d["Automaker"] == automaker) {
+							// console.log(d["Automaker"]+"---"+automaker);
+							data.push({
+								"Year" : 2010,
+								"sale" : d["2010YearEnd"]
+							});
+							data.push({
+								"Year" : 2011,
+								"sale" : d["2011YearEnd"]
+							});
+							data.push({
+								"Year" : 2012,
+								"sale" : d["2012YearEnd"]
+							});
+							data.push({
+								"Year" : 2013,
+								"sale" : d["2013YearEnd"]
+							});
+							data.push({
+								"Year" : 2014,
+								"sale" : d["2014YearEnd"]
+							});
+						}
+					});
+
+					// console.log(data);
+					var margin = {
+						top : 30,
+						right : 20,
+						bottom : 30,
+						left : 100
+					}, width = 600 - margin.left - margin.right, height = 270
+							- margin.top - margin.bottom;
+
+					var parseDate = d3.time.format("%d-%m-%Y").parse;
+					// Set the ranges
+					var x = d3.time.scale().range([ 0, width ]);
+					var y = d3.scale.linear().range([ height, 0 ]);
+
+					// Define the axes
+					var xAxis = d3.svg.axis().scale(x).orient("bottom")
+							.ticks(5);
+
+					var yAxis = d3.svg.axis().scale(y).orient("left").ticks(5);
+
+					// Define the line
+					var valueline = d3.svg.line().x(function(d) {
+						return x(d.Year);
+					}).y(function(d) {
+						return y(d.sale);
+					});
+
+					// Adds the svg canvas
+					var svg = d3.select("#brandSalesChart").append("svg").attr(
+							"width", width + margin.left + margin.right).attr(
+							"height", height + margin.top + margin.bottom)
+							.append("g").attr(
+									"transform",
+									"translate(" + margin.left + ","
+											+ margin.top + ")");
+
+					// Get the data
+
+					data.forEach(function(d) {
+						console.log(d);
+						d.Year = parseDate("01-01-" + d.Year);
+						d.sale = +d.sale;
+					});
+
+					// Scale the range of the data
+					x.domain(d3.extent(data, function(d) {
+						console.log(d.Year);
+						return d.Year;
+					}));
+					y.domain([ 0, d3.max(data, function(d) {
+						return d.sale;
+					}) ]);
+
+					// Add the valueline path.
+					var path=svg.append("path").attr("class", "line").attr("d",
+							valueline(data));
+
+					// Add the X Axis
+					svg.append("g").attr("class", "x axis").attr("transform",
+							"translate(0," + height + ")").call(xAxis);
+
+					// Add the Y Axis
+					svg.append("g").attr("class", "y axis").call(yAxis);
+					var totalLength = path.node().getTotalLength();
+					d3.select(path.node())
+						  .attr("stroke-dasharray", totalLength  ) 
+						  .attr("stroke-dashoffset", totalLength)
+						  .transition()
+							.duration(1000)
+							.ease("linear")
+							.attr("stroke-dashoffset", 0);
+				});
+
+		loadScatterPlotChart("FIAT", "A8");
+
+	}
+
+	function loadScatterPlotChart(make, model) {
+		$("#safetyRatingChart").empty();
+		var margin = {
+			top : 30,
+			right : 40,
+			bottom : 30,
+			left : 50
+		}, width = 600 - margin.left - margin.right, height = 270 - margin.top
+				- margin.bottom;
+
+		var parseDate = d3.time.format("%d-%m-%Y").parse;
+
+		var x = d3.time.scale().range([ 0, width ]);
+		var y0 = d3.scale.linear().range([ height, 0 ]);
+		var y1 = d3.scale.linear().range([ height, 0 ]);
+
+		var xAxis = d3.svg.axis().scale(x).orient("bottom").ticks(5);
+
+		var yAxisLeft = d3.svg.axis().scale(y0).orient("left").ticks(5);
+
+		var yAxisRight = d3.svg.axis().scale(y1).orient("right").ticks(5);
+		var tooltip = d3.select("body").append("div").attr("class", "tooltip")
+				.style("opacity", 0);
+
+		var valueline = d3.svg.line().x(function(d) {
+			return x(d.Year);
+		}).y(function(d) {
+			return y0(d.Rating);
+		});
+
+		var valueline2 = d3.svg.line().x(function(d) {
+			return x(d.Year);
+		}).y(function(d) {
+			return y1(d.recall);
+		});
+
+		var svg = d3.select("#safetyRatingChart").append("svg").attr("width",
+				width + margin.left + margin.right).attr("height",
+				height + margin.top + margin.bottom).append("g").attr(
+				"transform",
+				"translate(" + margin.left + "," + margin.top + ")");
+
+		// Get the data
+		var newdataset;
+		d3.json("finalRatingdataNew.json", function(error, newdata) {
+			Object.keys(newdata).forEach(function(d) {
+				console.log(model + "---" + d);
+				if (model.toLowerCase() == d.toLowerCase())
+					newdataset = newdata[d]["rating"];
+				console.log(newdataset);
+
+			});
+
+			// change string (from CSV) into number format
+			newdataset.forEach(function(d) {
+				if (d.Rating == "Not Rated")
+					d.Rating = Math.floor(Math.random() * 6) + 1;
+				d.recall = +d.recall;
+				d.Rating = +d.Rating;
+				d.YearLabel = d.Year;
+				d.Year = parseDate("01-01-" + d.Year);
+
+				//    console.log(d);
+			});
+
+			// Scale the range of the data
+			x.domain(d3.extent(newdataset, function(d) {
+				return d.Year;
+			}));
+			y0.domain([ 0, d3.max(newdataset, function(d) {
+				return Math.max(d.Rating);
+			}) ]);
+			y1.domain([ 0, d3.max(newdataset, function(d) {
+				return Math.max(d.recall);
+			}) ]);
+
+			var path=svg.append("path") // Add the valueline path.
+			.attr("d", valueline(newdataset));
+
+			var path1=svg.append("path") // Add the valueline2 path.
+			.style("stroke", "red").attr("d", valueline2(newdataset));
+
+			svg.append("g") // Add the X Axis
+			.attr("class", "x axis").attr("transform",
+					"translate(0," + height + ")").call(xAxis);
+
+			svg.append("g").attr("class", "y axis").style("fill", "steelblue")
+					.call(yAxisLeft);
+
+			svg.append("g").attr("class", "y axis").attr("transform",
+					"translate(" + width + " ,0)").style("fill", "red").call(
+					yAxisRight);
+
+			svg.selectAll("dot").data(newdataset).enter().append("circle")
+					.attr("r", 3.5).attr("cx", function(d) {
+						return x(d.Year);
+					}).attr("cy", function(d) {
+						return y0(d.Rating);
+					}).style("fill", "#0000ff").on(
+							"mouseover",
+							function(d) {
+								tooltip.transition().duration(200).style(
+										"opacity", .9);
+								tooltip.html(
+										"Rating " + d.Rating + " <br/>Year:"
+												+ d.YearLabel).style("left",
+										(d3.event.pageX + 5) + "px").style(
+										"top", (d3.event.pageY - 28) + "px");
+							}).on("mouseout", function(d) {
+						tooltip.transition().duration(500).style("opacity", 0);
+					});
+					 var totalLength = path.node().getTotalLength();
+					d3.select(path.node())
+						  .attr("stroke-dasharray", totalLength  ) 
+						  .attr("stroke-dashoffset", totalLength)
+						  .transition()
+							.duration(1000)
+							.ease("linear")
+							.attr("stroke-dashoffset", 0);
+					var totalLength1 = path1.node().getTotalLength();
+					d3.select(path1.node())
+						  .attr("stroke-dasharray", totalLength1  ) 
+						  .attr("stroke-dashoffset", totalLength1)
+						  .transition()
+							.duration(1000)
+							.ease("linear")
+							.attr("stroke-dashoffset", 0);
+			svg.selectAll("dot").data(newdataset).enter().append("circle")
+					.attr("r", 3.5).attr("cx", function(d) {
+						return x(d.Year);
+					}).attr("cy", function(d) {
+						return y1(d.recall);
+					}).style("fill", "#ff0000").on(
+							"mouseover",
+							function(d) {
+								tooltip.transition().duration(200).style(
+										"opacity", .9);
+								tooltip.html(
+										"Recall  : " + d.recall + " <br/>Year:"
+												+ d.YearLabel).style("left",
+										(d3.event.pageX + 5) + "px").style(
+										"top", (d3.event.pageY - 28) + "px");
+							}).on("mouseout", function(d) {
+						tooltip.transition().duration(500).style("opacity", 0);
+					});
+
+		});
+	}
+</script>
+</head>
+<body>
+
+	<!-- Navbar -->
+	<nav class="navbar navbar-default">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">Find My Car</a>
+			</div>
+			<ul class="nav navbar-nav">
+				<li><a data-toggle="tab" href="#menu1">Know</a></li>
+				<li><a data-toggle="tab" href="#menu2">Find</a></li>
+		</div>
+	</nav>
+
+	<div class="tab-content">
+		<div id="menu1" class="row tab-pane fade in active"
+			style="margin: 10px;">
+			<div id="map" class="col-sm-12 col-xs-12 col-lg-6 col-md-6"
+				style="height: 500px;"></div>
+			<div class="col-sm-12 col-xs-12 col-lg-6 col-md-6">
+
+			</div>
+		</div>
+
+		<div id="menu2" class="row tab-pane fade well" style="margin: 10px;">
+
+			<div class="panel panel-info">
+				<div class="panel-heading">
+					<form class="form-inline">
+						<label for="sel1">Year:</label> <select class="form-control"
+							id="sel1" onchange="loadBubbleChart()">
+							<option value="2010">2010</option>
+							<option value="2011">2011</option>
+							<option value="2012">2012</option>
+							<option value="2013">2013</option>
+							<option value="2014">2014</option>
+							<option value="2015">2015</option>
+						</select>
+						<label for="amount">Price range:</label>
+					  <p id="minAmount" readonly style="border:0; color:#f6931f; font-weight:bold;display:inline;min-width:50px;"></p>
+					  <div style="width:200px;display:inline-block; margin-left:10px;margin-right:10px;" id="slider-range"></div>
+					  <p id="maxAmount" readonly style="border:0; color:#f6931f; font-weight:bold;display:inline;"></p>
+					</form>
+					 
+					
+				</div>
+				<div class="panel-body">
+
+					<div class="row">
+						<div class="col-sm-4" id="bubbleChart"></div>
+						<div class="col-sm-8" id="networkChart">Network chart</div>
+					</div>
+					<div class="row">
+
+						<div class="row">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3>Spec Compare</h3>
+									<form class="form-inline">
+										<div class="form-group">
+											<input type="checkbox" id="engineCC" value="EngineCC"
+												checked="checked" disabled="disabled"
+												onclick="specCompareChart()" /> <label for="engineCC">Engine
+												CC</label>
+										</div>
+										<div class="form-group">
+											<input type="checkbox" id="rpm" value="EngineCC"
+												onclick="specCompareChart()" /> <label for="rpm">Power</label>
+										</div>
+										<div class="form-group">
+											<input type="checkbox" id="mileage" value="EngineCC"
+												onclick="specCompareChart()" /> <label for="mileage">Mileage</label>
+										</div>
+										<div class="form-group">
+											<input type="checkbox" id="price" value="EngineCC"
+												onclick="specCompareChart()" /> <label for="price">Price</label>
+										</div>
+										<div class="form-group">
+											<input type="checkbox" id="carHeight" value="EngineCC"
+												onclick="specCompareChart()" /> <label for="price">Height</label>
+										</div>
+										<div class="form-group">
+											<input type="checkbox" id="carWidth" value="EngineCC"
+												onclick="specCompareChart()" /> <label for="price">Width</label>
+										</div>
+										<div>
+											<select class="sortAttr form-inline">
+											  <option value="name">Name</option>
+											  <option value="enginecc">Engine CC</option>
+											  <option value="power">Power</option>
+											  <option value="mileage">Mileage</option>
+											  <option value="price">Price</option>
+											  <option value="height">Height</option>
+											  <option value="width">Width</option>
+											</select>
+											<select class="sortOrder form-inline">
+											  <option value="lth">Low to High</option>
+											  <option value="htl">High to Low</option>						 
+											</select>
+										</div>
+									</form>
+								</div>
+								<div class="panel-body">
+									<div id="ccChart" style="display: inline;"></div>
+									<div id="rpmChart" style="display: inline;"></div>
+									<div id="mileageChart" style="display: inline;"></div>
+									<div id="priceChart" style="display: inline;"></div>
+									<div id="widthChart" style="display: inline;"></div>
+									<div id="heightChart" style="display: inline;"></div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+
+				</div>
+			</div>
+			
+						<div
+							class="panel panel-default col-sm-12 col-lg-6 col-md-6 col-xs-12">
+							<div class="panel-heading">Brand Sales</div>
+							<div class="panel-body" id="brandSalesChart"></div>
+						</div>
+
+
+						<div
+							class="panel panel-default col-sm-12 col-lg-6 col-md-6 col-xs-12">
+							<div class="panel-heading">Safety & Recalls</div>
+							<div class="panel-body" id="safetyRatingChart"></div>
+						</div>
+						
+		</div>
+	</div>
+
+
+	<svg>
+	  <defs>
+	    <pattern id="myroad" patternUnits="objectBoundingBox" height="1"
+			width=".1">
+	      <image x="0" y="0" preserveAspectRatio="none"
+			xlink:href="./road.png"></image>
+	    </pattern>
+	  </defs>
+	</svg>
+
+
+	<!-- Footer -->
+	<footer class="container-fluid text-center"
+		style="position: fixed; bottom: 0; width: 100%; color: white;">
+		<p></p>
+	</footer>
+
+</body>
+</html>
