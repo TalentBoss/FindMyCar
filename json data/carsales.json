@@ -1,0 +1,290 @@
+[
+  {
+    "Automaker": "Acura",
+    "2010YearEnd": 133606,
+    "2011YearEnd": 123299,
+    "2012YearEnd": 156216,
+    "2013YearEnd": 165436,
+    "2014YearEnd": 167843
+  },
+  {
+    "Automaker": "Audi",
+    "2010YearEnd": 101629,
+    "2011YearEnd": 117561,
+    "2012YearEnd": 149782,
+    "2013YearEnd": 158061,
+    "2014YearEnd": 182011
+  },
+  {
+    "Automaker": "Bentley",
+    "2010YearEnd": 1430,
+    "2011YearEnd": 1877,
+    "2012YearEnd": 2315,
+    "2013YearEnd": 2872,
+    "2014YearEnd": 3003
+  },
+  {
+    "Automaker": "BMW",
+    "2010YearEnd": 220113,
+    "2011YearEnd": 247907,
+    "2012YearEnd": 295063,
+    "2013YearEnd": 309280,
+    "2014YearEnd": 339738
+  },
+  {
+    "Automaker": "Buick",
+    "2010YearEnd": 155389,
+    "2011YearEnd": 177633,
+    "2012YearEnd": 244166,
+    "2013YearEnd": 205509,
+    "2014YearEnd": 228963
+  },
+  {
+    "Automaker": "Cadillac",
+    "2010YearEnd": 146925,
+    "2011YearEnd": 152389,
+    "2012YearEnd": 180408,
+    "2013YearEnd": 182543,
+    "2014YearEnd": 170750
+  },
+  {
+    "Automaker": "Chevrolet",
+    "2010YearEnd": 1565632,
+    "2011YearEnd": 1775812,
+    "2012YearEnd": 1851646,
+    "2013YearEnd": 1947125,
+    "2014YearEnd": 2033442
+  },
+  {
+    "Automaker": "Chrysler",
+    "2010YearEnd": 197446,
+    "2011YearEnd": 221346,
+    "2012YearEnd": 281460,
+    "2013YearEnd": 302492,
+    "2014YearEnd": 308785
+  },
+  {
+    "Automaker": "Dodge/Ram",
+    "2010YearEnd": 596627,
+    "2011YearEnd": 708650,
+    "2012YearEnd": 703007,
+    "2013YearEnd": 596343,
+    "2014YearEnd": 574155
+  },
+  {
+    "Automaker": "Fiat",
+    "2010YearEnd": 18500,
+    "2011YearEnd": 19769,
+    "2012YearEnd": 35043,
+    "2013YearEnd": 43236,
+    "2014YearEnd": 46121
+  },
+  {
+    "Automaker": "Ford",
+    "2010YearEnd": 1755583,
+    "2011YearEnd": 2057210,
+    "2012YearEnd": 2160859,
+    "2013YearEnd": 2403542,
+    "2014YearEnd": 2376841
+  },
+  {
+    "Automaker": "GMC",
+    "2010YearEnd": 334981,
+    "2011YearEnd": 397986,
+    "2012YearEnd": 438133,
+    "2013YearEnd": 450901,
+    "2014YearEnd": 501853
+  },
+  {
+    "Automaker": "Honda",
+    "2010YearEnd": 1096874,
+    "2011YearEnd": 1023986,
+    "2012YearEnd": 1266569,
+    "2013YearEnd": 1359876,
+    "2014YearEnd": 1373029
+  },
+  {
+    "Automaker": "Hyundai",
+    "2010YearEnd": 538228,
+    "2011YearEnd": 645691,
+    "2012YearEnd": 557599,
+    "2013YearEnd": 720783,
+    "2014YearEnd": 725718
+  },
+  {
+    "Automaker": "Infiniti",
+    "2010YearEnd": 103411,
+    "2011YearEnd": 98461,
+    "2012YearEnd": 139310,
+    "2013YearEnd": 116455,
+    "2014YearEnd": 117330
+  },
+  {
+    "Automaker": "Jaguar",
+    "2010YearEnd": 13340,
+    "2011YearEnd": 12276,
+    "2012YearEnd": 25357,
+    "2013YearEnd": 16952,
+    "2014YearEnd": 15773
+  },
+  {
+    "Automaker": "Jeep",
+    "2010YearEnd": 291138,
+    "2011YearEnd": 419349,
+    "2012YearEnd": 474131,
+    "2013YearEnd": 490454,
+    "2014YearEnd": 692348
+  },
+  {
+    "Automaker": "Kia",
+    "2010YearEnd": 356268,
+    "2011YearEnd": 485492,
+    "2012YearEnd": 524989,
+    "2013YearEnd": 535179,
+    "2014YearEnd": 580234
+  },
+  {
+    "Automaker": "Land Rover",
+    "2010YearEnd": 31864,
+    "2011YearEnd": 38099,
+    "2012YearEnd": 57790,
+    "2013YearEnd": 50010,
+    "2014YearEnd": 51465
+  },
+  {
+    "Automaker": "Lexus",
+    "2010YearEnd": 229329,
+    "2011YearEnd": 198552,
+    "2012YearEnd": 277046,
+    "2013YearEnd": 273847,
+    "2014YearEnd": 311389
+  },
+  {
+    "Automaker": "Lincoln",
+    "2010YearEnd": 85828,
+    "2011YearEnd": 85643,
+    "2012YearEnd": 119877,
+    "2013YearEnd": 81694,
+    "2014YearEnd": 94474
+  },
+  {
+    "Automaker": "Maserati",
+    "2010YearEnd": 1897,
+    "2011YearEnd": 2321,
+    "2012YearEnd": 2730,
+    "2013YearEnd": 4768,
+    "2014YearEnd": 12943
+  },
+  {
+    "Automaker": "Mazda",
+    "2010YearEnd": 229566,
+    "2011YearEnd": 250426,
+    "2012YearEnd": 300928,
+    "2013YearEnd": 283947,
+    "2014YearEnd": 305801
+  },
+  {
+    "Automaker": "Mercedes-Benz",
+    "2010YearEnd": 225007,
+    "2011YearEnd": 261808,
+    "2012YearEnd": 307967,
+    "2013YearEnd": 334350,
+    "2014YearEnd": 356136
+  },
+  {
+    "Automaker": "Mini",
+    "2010YearEnd": 45644,
+    "2011YearEnd": 57511,
+    "2012YearEnd": 68117,
+    "2013YearEnd": 66502,
+    "2014YearEnd": 56112
+  },
+  {
+    "Automaker": "Mitsubishi",
+    "2010YearEnd": 55683,
+    "2011YearEnd": 79020,
+    "2012YearEnd": 82150,
+    "2013YearEnd": 62227,
+    "2014YearEnd": 77643
+  },
+  {
+    "Automaker": "Nissan",
+    "2010YearEnd": 805159,
+    "2011YearEnd": 944073,
+    "2012YearEnd": 1021779,
+    "2013YearEnd": 1131965,
+    "2014YearEnd": 1269565
+  },
+  {
+    "Automaker": "Porsche",
+    "2010YearEnd": 25320,
+    "2011YearEnd": 29023,
+    "2012YearEnd": 43772,
+    "2013YearEnd": 42323,
+    "2014YearEnd": 47007
+  },
+  {
+    "Automaker": "Saab",
+    "2010YearEnd": 4837,
+    "2011YearEnd": 5610,
+    "2012YearEnd": 12011,
+    "2013YearEnd": 367843,
+    "2014YearEnd": 469139
+  },
+  {
+    "Automaker": "Scion",
+    "2010YearEnd": 45678,
+    "2011YearEnd": 49271,
+    "2012YearEnd": 66123,
+    "2013YearEnd": 68321,
+    "2014YearEnd": 58009
+  },
+  {
+    "Automaker": "smart",
+    "2010YearEnd": 5927,
+    "2011YearEnd": 5208,
+    "2012YearEnd": 10009,
+    "2013YearEnd": 9264,
+    "2014YearEnd": 10453
+  },
+  {
+    "Automaker": "Subaru",
+    "2010YearEnd": 263820,
+    "2011YearEnd": 266989,
+    "2012YearEnd": 336441,
+    "2013YearEnd": 424683,
+    "2014YearEnd": 513693
+  },
+  {
+    "Automaker": "Suzuki",
+    "2010YearEnd": 23994,
+    "2011YearEnd": 26618,
+    "2012YearEnd": 43664,
+    "2013YearEnd": 5946,
+    "2014YearEnd": 0
+  },
+  {
+    "Automaker": "Toyota",
+    "2010YearEnd": 1488588,
+    "2011YearEnd": 1396838,
+    "2012YearEnd": 1764833,
+    "2013YearEnd": 1923874,
+    "2014YearEnd": 2004373
+  },
+  {
+    "Automaker": "Volkswagen",
+    "2010YearEnd": 256830,
+    "2011YearEnd": 324402,
+    "2012YearEnd": 413881,
+    "2013YearEnd": 407704,
+    "2014YearEnd": 366970
+  },
+  {
+    "Automaker": "Volvo",
+    "2010YearEnd": 53948,
+    "2011YearEnd": 67240,
+    "2012YearEnd": 73505,
+    "2013YearEnd": 61233,
+    "2014YearEnd": 56366
+  }
+]
